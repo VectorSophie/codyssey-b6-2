@@ -1,9 +1,18 @@
-_COMMIT_TMPL = """\
+def build_commit_prompt(status: str, diff: str, convention: dict) -> str:
+    lang = '한국어' if convention.get('commit_language', 'ko') == 'ko' else 'English'
+    prefix_rule = (
+        '- conventional commit 형식 사용: feat/fix/docs/refactor/test/chore/style'
+        if convention.get('commit_prefix', True)
+        else '- prefix 없이 자유 형식 허용'
+    )
+
+    return f"""\
 Git 변경 사항을 분석하여 커밋 메시지를 생성하세요.
+언어: {lang}
 
 규칙:
 - 제목: 50자 이내 권장(최대 72자), 명령형, 마침표 없음
-- conventional commit 형식: feat/fix/docs/refactor/test/chore/style
+{prefix_rule}
 - 본문: 변경된 파일(모듈) 1~3개 언급, 핵심 변경 사항 1~2개를 불릿으로 요약
 - 커밋 메시지만 출력하고 다른 설명은 쓰지 않음
 
@@ -20,26 +29,26 @@ Git 변경 사항을 분석하여 커밋 메시지를 생성하세요.
 {diff}
 """
 
-_PR_TMPL = """\
+
+def build_pr_prompt(status: str, diff: str, branch: str, convention: dict) -> str:
+    lang = '한국어' if convention.get('pr_language', 'ko') == 'ko' else 'English'
+    sections: list[str] = convention.get('pr_sections', ['Why', 'What', 'How to Test'])
+    section_names = ', '.join(sections)
+    section_template = '\n\n'.join(f'## {s}\n- <내용>' for s in sections)
+
+    return f"""\
 Git 변경 사항을 분석하여 Pull Request 제목과 본문 초안을 생성하세요.
+언어: {lang}
 
 규칙:
 - PR 제목: 최대 80자, 변경 내용을 명확하게 표현
-- PR 본문: 아래 정확한 섹션 구조 필수 (각 섹션 최소 불릿 1개)
-- 한국어로 작성
+- PR 본문: 다음 섹션 필수 포함 ({section_names}), 각 섹션 최소 불릿 1개
 - 다른 설명 없이 지정된 형식만 출력
 
-출력 형식 (이 형식을 정확히 따를 것):
+출력 형식:
 TITLE: <PR 제목>
 
-## Why
-- <변경 배경>
-
-## What
-- <핵심 변경 사항>
-
-## How to Test
-- <테스트 방법>
+{section_template}
 
 --- 현재 브랜치 ---
 {branch}
@@ -50,11 +59,3 @@ TITLE: <PR 제목>
 --- GIT DIFF ---
 {diff}
 """
-
-
-def build_commit_prompt(status: str, diff: str) -> str:
-    return _COMMIT_TMPL.format(status=status, diff=diff)
-
-
-def build_pr_prompt(status: str, diff: str, branch: str) -> str:
-    return _PR_TMPL.format(status=status, diff=diff, branch=branch)

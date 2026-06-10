@@ -1,0 +1,24 @@
+# AI Git 생성기 컨벤션 설정
+# python main.py --convention .ai-gitgen.yml commit
+
+convention:
+  # 커밋 메시지 언어: ko (한국어) | en (English)
+  commit_language: ko
+
+  # conventional commit prefix 사용: feat/fix/docs/refactor/test/chore/style
+  commit_prefix: true
+
+  # PR 본문 언어: ko (한국어) | en (English)
+  pr_language: ko
+
+  # PR 본문 섹션 (순서 유지, 헤더 이름 자유 변경 가능)
+  pr_sections:
+    - Why
+    - What
+    - How to Test
+
+  # 안전 모드: diff 최대 파일 수
+  safe_max_files: 10
+
+  # 안전 모드: diff 최대 줄 수
+  safe_max_lines: 200
