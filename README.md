@@ -183,3 +183,99 @@ python main.py --safe-mode commit
 
 AI가 생성한 커밋/PR 텍스트는 초안이며, **반드시 사용자가 검토 후 적용**해야 한다.  
 생성된 결과는 터미널에만 출력되며, git commit 또는 PR 작성은 사용자가 직접 수행한다.
+
+---
+
+## 보너스 과제
+
+### 보너스 1 — 실제 리포지토리 PR 적용
+
+**대상 리포지토리**: [codyssey-b6-1](https://github.com/VectorSophie/codyssey-b6-1)  
+**PR**: https://github.com/VectorSophie/codyssey-b6-1/pull/1
+
+**변경 내용**: `scripts/provision.sh` + `scripts/teardown.sh` 추가  
+→ AWS 인프라(VPC/EC2/SG) 20개 이상의 CLI 명령을 단일 스크립트로 자동화
+
+**AI 초안 → 최종 PR 변경점** (5~10줄 요약):
+
+| 항목 | AI 초안 | 최종 수정 |
+|---|---|---|
+| Why 1번 | "반복적이고 수동적인 과정" | CLI 명령 20개 이상으로 수치화 |
+| What | 4개 항목 | "현재 IP 자동 감지" 항목 추가 (AI 누락) |
+| How to Test | 실행 방법만 서술 | "전제: aws profile 설정 완료" 조건 선행 명시 |
+| PR 제목 | "해체 스크립트" | "해제 스크립트"로 자연스러운 표현 수정 |
+
+→ AI 초안은 What/Why/How to Test 구조를 정확히 따랐지만, 기술적 세부 조건(profile 설정, IP 자동 감지)은 사람이 보완 필요.
+
+---
+
+### 보너스 2 — 커밋/PR 템플릿 커스터마이징
+
+`.ai-gitgen.yml` 설정 파일로 팀 컨벤션을 정의하고 도구에 반영.
+
+```bash
+# 컨벤션 파일 적용
+python main.py --convention .ai-gitgen.yml commit
+```
+
+**설정 가능 항목**:
+
+| 키 | 기본값 | 설명 |
+|---|---|---|
+| `commit_language` | `ko` | 커밋 언어 (`ko` / `en`) |
+| `commit_prefix` | `true` | feat/fix 등 prefix 사용 여부 |
+| `pr_language` | `ko` | PR 언어 (`ko` / `en`) |
+| `pr_sections` | `[Why, What, How to Test]` | PR 섹션 헤더 (순서/이름 자유 변경) |
+| `safe_max_files` | `10` | 안전 모드 파일 수 제한 |
+| `safe_max_lines` | `200` | 안전 모드 줄 수 제한 |
+
+**적용 전 (기본값)** vs **적용 후 (커스텀 컨벤션)** 예시:
+
+```
+# 기본값 (commit_language: ko, commit_prefix: true)
+feat: AWS 인프라 자동화 프로비저닝 스크립트 추가
+
+# commit_language: en, commit_prefix: false 적용 시
+Add automated AWS infrastructure provisioning script
+```
+
+---
+
+### 보너스 3 — 안전 모드 고도화
+
+**마스킹 패턴** (정규표현식 기반, 9가지):
+
+| 패턴 | 대상 |
+|---|---|
+| `sk-or-[A-Za-z0-9\-_]{20,}` | OpenRouter API Key |
+| `sk-ant-[A-Za-z0-9\-_]{20,}` | Anthropic API Key |
+| `sk-[A-Za-z0-9\-_]{20,}` | OpenAI API Key |
+| `AKIA[0-9A-Z]{16}` | AWS Access Key |
+| `eyJ...` (JWT 형식) | JWT 토큰 |
+| `-----BEGIN ... KEY-----` | PEM 개인키 |
+| `password=`, `secret=` 형태 | 환경변수 민감값 |
+| 이메일 주소 | 개인정보 |
+| 신용카드 16자리 | 결제 정보 |
+
+**diff 크기 제한 정책** (CLI 옵션으로 조정 가능):
+
+```bash
+# 기본: 파일 10개, 200줄
+python main.py --safe-mode commit
+
+# 강화: 파일 3개, 50줄
+python main.py --safe-mode --safe-max-files 3 --safe-max-lines 50 commit
+```
+
+**안전 모드 ON/OFF 출력 비교**:
+
+```
+# OFF (기본)
+[INFO] Git diff 수집 완료: 362줄
+
+# ON (--safe-mode --safe-max-files 3 --safe-max-lines 50)
+[SAFE] 파일 1개 생략됨 (최대 3개)
+[SAFE] 306줄 생략됨 (최대 50줄)
+[INFO] Git diff 수집 완료: 52줄
+[INFO] 안전 모드: 파일 최대 3개 / 줄 최대 50줄
+```

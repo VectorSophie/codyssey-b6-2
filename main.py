@@ -63,16 +63,16 @@ def cmd_commit(args: argparse.Namespace, convention: dict) -> None:
 def cmd_pr(args: argparse.Namespace, convention: dict) -> None:
     collector = GitCollector()
 
-    if not collector.count_changed_files():
-        print('[INFO] 변경 사항이 없습니다. PR 초안을 생성하지 않고 종료합니다.')
-        sys.exit(0)
-
     max_files = args.safe_max_files or convention.get('safe_max_files', 10)
     max_lines = args.safe_max_lines or convention.get('safe_max_lines', 200)
 
     branch = collector.get_current_branch()
     diff = collector.get_diff(safe_mode=args.safe_mode, for_pr=True,
                               safe_max_files=max_files, safe_max_lines=max_lines)
+    if not diff.strip():
+        print('[INFO] 변경 사항이 없습니다. PR 초안을 생성하지 않고 종료합니다.')
+        sys.exit(0)
+
     status = collector.get_status()
     diff_lines = len(diff.splitlines())
 
