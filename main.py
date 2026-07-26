@@ -13,7 +13,7 @@ from git_collector import GitCollector
 from prompt_builder import build_commit_prompt, build_pr_prompt
 from validator import validate_commit, validate_pr
 
-DEFAULT_MODEL = 'anthropic/claude-3.5-haiku'
+DEFAULT_MODEL = 'anthropic/claude-opus-4'
 DEFAULT_TEMPERATURE = 0.3
 DEFAULT_MAX_TOKENS = 1024
 
