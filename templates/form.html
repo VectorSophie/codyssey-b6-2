@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ "메모 수정" if memo else "새 메모 작성" }}</h1>
+<form method="post" action="{{ ('/memos/' ~ memo.id ~ '/edit') if memo else '/memos' }}">
+  <label for="title">제목</label>
+  <input type="text" id="title" name="title" required value="{{ memo.title if memo else '' }}">
+  <label for="content">내용</label>
+  <textarea id="content" name="content" required>{{ memo.content if memo else '' }}</textarea>
+  <div class="actions">
+    <button type="submit">저장</button>
+    <a class="button" href="{{ ('/memos/' ~ memo.id) if memo else '/memos' }}">취소</a>
+  </div>
+</form>
+{% endblock %}

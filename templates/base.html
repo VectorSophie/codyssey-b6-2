@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>메모장</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; color: #222; }
+    a { color: #2563eb; }
+    nav a { margin-right: 12px; }
+    .memo-item { border-bottom: 1px solid #ddd; padding: 10px 0; }
+    textarea { width: 100%; min-height: 140px; }
+    input[type=text] { width: 100%; padding: 6px; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    .actions { margin-top: 16px; }
+    .actions button, .actions a.button {
+      display: inline-block; padding: 6px 12px; margin-right: 8px;
+      border: 1px solid #999; background: #f4f4f4; cursor: pointer; text-decoration: none; color: #222;
+    }
+  </style>
+</head>
+<body>
+  <nav><a href="/">홈</a><a href="/memos">메모 목록</a><a href="/memos/new">새 메모</a></nav>
+  <hr>
+  {% block content %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ memo.title }}</h1>
+<p><small>작성일시: {{ memo.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</small></p>
+<p style="white-space: pre-wrap;">{{ memo.content }}</p>
+<div class="actions">
+  <a class="button" href="/memos/{{ memo.id }}/edit">수정</a>
+  <form method="post" action="/memos/{{ memo.id }}/delete" style="display:inline">
+    <button type="submit" onclick="return confirm('삭제하시겠습니까?')">삭제</button>
+  </form>
+  <a class="button" href="/memos">목록으로</a>
+</div>
+{% endblock %}
