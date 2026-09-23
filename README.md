@@ -1,4 +1,4 @@
-# b5-2 — FastAPI 메모장 (라우터/서비스/저장소 계층 분리 + PRG)
+# b6-2 — FastAPI 메모장 (라우터/서비스/저장소 계층 분리 + PRG)
 
 FastAPI + SQLAlchemy + Jinja2 SSR로 만든 메모 CRUD 웹앱입니다. 인메모리가 아니라 SQLite DB에 저장되고, 등록/수정/삭제 후에는 항상 303 리다이렉트로 새로고침 중복 제출을 막습니다.
 
@@ -10,7 +10,7 @@ FastAPI + SQLAlchemy + Jinja2 SSR로 만든 메모 CRUD 웹앱입니다. 인메�
 ## 실행 방법
 
 ```sh
-cd codyssey-b5-2
+cd codyssey-b6-2
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -22,7 +22,7 @@ uvicorn main:app --reload
 ## 폴더 구조
 
 ```
-codyssey-b5-2/
+codyssey-b6-2/
 ├── main.py              # FastAPI 앱 생성 + 라우터 등록 + 테이블 생성
 ├── database.py           # engine/SessionLocal/get_db 의존성
 ├── models/memo.py        # SQLAlchemy ORM 모델 (Memo)
